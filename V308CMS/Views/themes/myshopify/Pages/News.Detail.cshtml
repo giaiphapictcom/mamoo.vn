@@ -1,0 +1,145 @@
+﻿@using V308CMS.Common
+@using V308CMS.Helpers.Url
+@model V308CMS.Data.NewsDetailPageContainer
+@{
+    Layout = "~/Views/themes/" + ViewBag.domain + "/Layout/Layout.cshtml";
+
+}
+@section BodyId{@Html.Raw("news")}
+@section BodyClass{@Html.Raw("template-blog")}
+@section header {
+    <title>Tin tức - @Model.NewsItem.Title</title>
+    <meta name="keywords" content="@Model.NewsItem.Keyword">
+    <meta property="og:url" content="@Request.Url">
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="@Model.NewsItem.Title">
+    <meta property="og:image" content="@Model.NewsItem.Image.ToUrl(600,600)">
+    <meta property="og:description" content="@Model.NewsItem.Summary">
+}
+@section Breadcrumb{
+    <div class="clearfix breadcrumb-wrap">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="breadcrumb">
+                        <h2></h2>
+                        <a href="/" title="Back to the frontpage">Trang chủ</a>
+                        <span class="icon"><i class="fa fa-circle"></i></span>
+                            <a href="@Url.NewsIndexUrl()" title="Tin tức">Tin tức</a>
+                        <span class="icon"><i class="fa fa-circle"></i></span>
+                        <strong>
+                            @Model.NewsItem.Title 
+                        </strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<div class="row">
+    <!-- Begin sidebar -->
+    <div class="col-xs-12 col-sm-5 col-md-3 sidebar">
+        <div class="widget widget-recent-articles">
+            <div class="widget-title">
+                <h3><span>Bài viết đọc nhiều</span></h3>
+            </div>
+            <div class="widget-content">
+                @if (Model.ListNewsMostView.IsHasData())
+                {
+                    <ul>
+                        @foreach (var newsItem in Model.ListNewsMostView)
+                        {
+                            <li class="article">
+                                <p>
+                                    <a href="@Url.NewsDetailUrl(newsItem)" title="@newsItem.Title">
+                                        @newsItem.Title
+                                    </a>
+                                    <em>@newsItem.Date.ToDdMmHhmm()</em>
+                                </p>
+                            </li>
+                        }
+
+                    </ul>
+                }
+
+            </div>
+        </div>
+        <div class="widget widget-tags">
+            <div class="widget-title">
+                <h3><span>Tags</span></h3>
+            </div>
+            <div class="widget-content">
+                <ul class="tags">
+                    <li class="active">
+                        <a href="@Url.NewsIndexUrl()" title="Danh sách tin">All</a>
+                    </li>
+                    @if (!string.IsNullOrWhiteSpace(Model.NewsItem.Keyword))
+                    {
+                        var listTag = Model.NewsItem.Keyword.Split(new[] { ';', ',' }, StringSplitOptions.RemoveEmptyEntries);
+                        if (listTag.Any())
+                        {
+                            foreach (var tag in listTag)
+                            {
+                                <li>
+                                    <a href="@Url.NewsTagUrl(tag)" title="@tag">@tag</a>
+
+                                </li>
+                            }
+
+                        }
+                    }
+                </ul>
+            </div>
+
+
+        </div>
+    </div>
+    <!-- End sidebar -->
+    @if (Model.NewsItem != null)
+    {
+        <div class="col-xs-12 col-md-9 col-sm-9 blog-detail col-main">
+            <header class="page-header">
+                <h1>
+                    <a href="@Url.NewsDetailUrl(Model.NewsItem)" title="@Model.NewsItem.Title">
+                        @Model.NewsItem.Title
+                    </a>
+                </h1>
+
+                <div class="blog-time">
+                    <span class="date-time">
+                        <span class="date-sub">Ngày đăng : </span>@Model.NewsItem.Date.ToDdMmHhmm()
+                    </span>
+                </div>
+                
+                <div class="block-images">
+                    <img src="@Model.NewsItem.Image.ToUrl()" alt="@Model.NewsItem.Title"/>
+                </div>
+            </header>
+
+            <div class="rte">
+                @Html.Raw(Model.NewsItem.Detail)
+                <div class="fb-share-button" data-href="@Request.Url" data-layout="button_count" data-size="large" data-mobile-iframe="true" style="display: block">
+                    <a class="fb-xfbml-parse-ignore" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=@(Request.Url)&amp;src=sdkpreparse">Chia sẻ</a>
+                </div>
+            </div>
+            @if (Model.NextNewsItem != null || Model.PreviousNewsItem != null)
+            {
+                <div class="action-btn">
+                    @if (Model.PreviousNewsItem != null)
+                    {
+
+                        <span class="left"><a href="@Url.NewsDetailUrl(Model.PreviousNewsItem)" title="@Model.PreviousNewsItem.Title">Tin cũ</a></span>
+                    }
+                    @if (Model.NextNewsItem != null)
+                    {
+                        <span class="right"><a href="@Url.NewsDetailUrl(Model.NextNewsItem)" title="@Model.NextNewsItem.Title">Tin mới</a></span>
+
+                    }
+                </div>
+
+            }
+        </div>
+    }
+
+   
+</div>

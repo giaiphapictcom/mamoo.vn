@@ -1,0 +1,258 @@
+﻿@using Newtonsoft.Json
+@using V308CMS.Data
+@using V308CMS.Data.Models
+@using V308CMS.Helpers
+@using V308CMS.Helpers.Url
+@model V308CMS.Models.ShippingModels
+@{
+    Layout = "~/Views/themes/" + ViewBag.domain + "/Layout/CartLayout.cshtml";
+    ViewBag.Title = "Thanh toán";
+    var listRegion = (List<Region>)ViewBag.ListRegion;
+    var listCity = (List<Region>)ViewBag.ListCity;
+    var listAward = (List<Region>)ViewBag.ListWard;
+    var listShippingAddress = (List<ShippingAddress>)ViewBag.ListShippingAddress;
+    var currentOrder =(ProductOrder) ViewBag.Order;
+    var transactionId = (string)ViewBag.TransactionId;
+}
+<div class="step" data-step="contact_information">
+    <input name="utf8" type="hidden" value="&#x2713;" /><input type="hidden" name="_method" value="patch" /><input type="hidden" name="authenticity_token" value="" />
+    <input type="hidden" name="previous_step" id="previous_step" value="contact_information" />
+    <input type="hidden" name="step" value="shipping_method" />
+    <div class="step__sections">
+        @if (AuthenticationHelper.IsAuthenticated)
+        {
+            <div class="section section--contact-information">
+                <div class="section__header">
+                    <div class="layout-flex layout-flex--tight-vertical layout-flex--loose-horizontal layout-flex--wrap">
+                        <h2 class="section__title layout-flex__item layout-flex__item--stretch">Thông tin người nhận</h2>
+                    </div>
+                </div>
+                <div class="section__content" data-section="customer-information">
+                    <input value="@AuthenticationHelper.AuthenticateName" size="30" type="hidden" name="checkout[email]" id="checkout_email" />
+                    <div class="logged-in-customer-information">
+                        <div class="logged-in-customer-information__avatar-wrapper">
+                            <div class="logged-in-customer-information__avatar gravatar" style="background-image: url(@User.Avatar); filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src=@User.Avatar)" role="img" aria-label="Avatar"></div>
+                        </div>
+
+                        <p class="logged-in-customer-information__paragraph">
+                            <span class="page-main__emphasis">@AuthenticationHelper.AuthenticateName</span>
+                            <br>
+                            <a href="@Url.AccountLogoutUrl(Url.PaymentBuyNowUrl())" title="Thoát tài khoản">Thoát tài khoản</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <form method="POST" action="@Url.AccountLoginUrl()" name="form_login">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="returnUrl" value="@Request.Url" />
+                <div class="section section--contact-information">
+                    <div class="section__header">
+                        <div class="layout-flex layout-flex--tight-vertical layout-flex--loose-horizontal layout-flex--wrap">
+                            <h2 class="section__title layout-flex__item layout-flex__item--stretch">Đăng nhập</h2>
+                        </div>
+                    </div>
+                    <div class="section__content" data-section="customer-information">
+                        <div class="field field--optional field--half" data-address-field="first_name">
+                            <div class="field__input-wrapper">
+                                <label class="field__label field__label--visible" for="email">Email</label>
+                                <input placeholder="email" class="field__input" size="30" type="text" name="email" id="email">
+                            </div>
+                        </div>
+                        <div class="field field--optional field--half" data-address-field="first_name">
+                            <div class="field__input-wrapper">
+                                <label class="field__label field__label--visible" for="password">Mật khẩu</label>
+                                <input placeholder="password" class="field__input" size="30" type="password" name="password" id="password">
+                            </div>
+                        </div>
+                        <div class="action-btn">
+                            <p>
+                                <input type="submit" class="btn" value="Đăng nhập" style="padding: 10px; margin-left: 5px; margin-top: 5px; width: 135px">
+                                <a class="btn" style="width: 135px; margin-top: 5px; padding:10px" title="Đăng ký tài khoản" href="@Url.AccounRegisterUrl()">Đăng ký</a>
+                            </p>
+                            <p style="margin-top: 5px; padding-left: 5px">Hoặc</p>
+                            <p style="margin-top: 5px">
+                                <a href="@Url.SocialLoginFacebookUrl(Request.Url.ToString())" class="btn btn-block btn-social btn-facebook user-name-loginfb" title="Đăng nhập bằng Facebook" style="width: 270px; margin-bottom: 5px; margin-left: 6px;padding: 10px">
+                                    <i class="fa fa-facebook"></i>
+                                    <span>Đăng nhập bằng Facebook</span>
+                                </a>
+                                <a href="@Url.SocialLoginGoogleUrl(Request.Url.ToString())" class="btn btn-block btn-social btn-google user-name-login-google" style="width: 270px; margin-left: 6px;padding: 10px" title="Đăng nhập bằng Google">
+                                    <i class="fa fa-google-plus"></i>
+                                    <span>Đăng nhập bằng Google</span>
+                                </a>
+                            </p>
+                        </div>
+
+                    </div>
+                </div>
+            </form>
+
+        }
+        @if (AuthenticationHelper.IsAuthenticated)
+        {
+            if (currentOrder != null)
+            {
+                <div class="section">
+                    <div class="content-box">
+                        <div class="content-box__row content-box__row--tight-spacing-vertical content-box__row--secondary">
+                            <div class="review-block">
+                                <div class="review-block__inner">
+                                    <div class="review-block__label">
+                                        Địa chỉ nhận hàng
+                                    </div>
+                                    <div class="review-block__content">
+                                        @currentOrder.Address
+                                    </div>
+                                </div>
+                                <div class="review-block__link">
+                                    <a class="link--small" href="#form_order" title="Sửa địa chỉ nhận hàng" id="btn-edit-shipping">
+                                        <i class="fa fa-pencil">Hủy</i>
+                                        <span class="visually-hidden">Hủy</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="step__footer" id="edit_shipping_footer">
+                        <a href="@Url.PaymentIndexUrl()" class="step__footer__continue-btn btn" style="background-color: #ff0000">
+                            <span class="btn__content">@(string.IsNullOrWhiteSpace(transactionId) ? "Đặt hàng" : "Tiếp tục")</span>
+                            <i class="btn__spinner icon icon--button-spinner"></i>
+                        </a>
+                        <a class="step__footer__previous-link" href="@Url.ViewCartUrl()">
+                            <svg class="icon-svg icon-svg--color-accent icon-svg--size-10 previous-link__icon rtl-flip" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10">
+                                <path d="M8 1L7 0 3 4 2 5l1 1 4 4 1-1-4-4" />
+                            </svg>
+                            <span class="step__footer__previous-link-content">Quay lại giỏ hàng</span>
+                        </a>
+                    </div>
+
+                </div>
+            }
+            <form action="@Url.SendOrderCartUrl()" method="post" id="form_order" name="form_order" class="@(currentOrder != null?(string.IsNullOrWhiteSpace(transactionId)? "show-edit-shipping" : ""):"")" style="padding-top: 1em;">
+                <div class="section section--shipping-address">
+                    <div class="section__header">
+                        <h2 class="section__title">Địa chỉ giao hàng</h2>
+                    </div>
+
+                    <div class="section__content">
+                        <div class="fieldset" data-address-fields>
+                            @if (listShippingAddress != null && listShippingAddress.Count > 0)
+                            {
+                                int i = 0;
+                                <div class="field field--required">
+                                    <div class="field__input-wrapper field__input-wrapper--select">
+                                        <select class="field__input field__input--select" name="shipping" id="shipping">
+                                            <option value="0">Địa chỉ mới…</option>
+                                            @foreach (var shipping in listShippingAddress)
+                                            {
+                                                <option value="@JsonConvert.SerializeObject(shipping)" @(i == 0 ? "selected='selected'" : "")>@shipping.Address, @shipping.Ward, @shipping.City, @shipping.Region</option>
+                                                i = i + 1;
+                                            }
+
+                                        </select>
+                                    </div>
+                                </div>
+
+                            }
+                            <div class="field field--required">
+                                <div class="field__input-wrapper">
+                                    @Html.TextBoxFor(model => model.FullName, new
+                                                       {
+                                                           size = "30",
+                                                           @class = "field__input",
+                                                           placeholder = "Họ tên người nhận",
+                                                           id = "checkout_name"
+
+                                                       })
+                                </div>
+                                @Html.ValidationMessageFor(ship => ship.FullName)
+                            </div>
+                            <div class="field field--required" data-address-field="Phone">
+                                <div class="field__input-wrapper">
+                                    @Html.TextBoxFor(model => model.Phone, new
+                                                       {
+                                                           size = "30",
+                                                           @class = "field__input",
+                                                           placeholder = "Số điện thoại di động"
+
+                                                       })
+                                </div>
+                                @Html.ValidationMessageFor(ship => ship.Phone)
+                            </div>
+                            <div class="field field--required">
+                                <div class="field__input-wrapper field__input-wrapper--select">
+                                    @Html.DropDownListFor(ship => ship.Region, new SelectList(listRegion, "Id", "Name"), "Chọn Tỉnh/Thành phố", new
+                                                       {
+                                                           @class = "field__input field__input--select"
+                                                       })
+                                    @Html.ValidationMessageFor(ship => ship.Region)
+                                </div>
+                            </div>
+                            <div class="field field--required">
+                                <div class="field__input-wrapper field__input-wrapper--select">
+                                    @Html.DropDownListFor(ship => ship.City, new SelectList(listCity, "Id", "Name"), "Chọn Quận/Huyện", new
+                                                       {
+                                                           @class = "field__input field__input--select"
+                                                       })
+                                    @Html.ValidationMessageFor(ship => ship.City)
+                                </div>
+                            </div>
+                            <div class="field field--required">
+                                <div class="field__input-wrapper field__input-wrapper--select">
+                                    @Html.DropDownListFor(ship => ship.Ward, new SelectList(listAward, "Id", "Name"), "Chọn Xã/Phường", new
+                                                       {
+                                                           @class = "field__input field__input--select"
+                                                       })
+                                    @Html.ValidationMessageFor(ship => ship.Ward)
+                                </div>
+
+                            </div>
+                            <div class="field field--required">
+                                <div class="field__input-wrapper">
+                                    @Html.TextBoxFor(model => model.Address, new
+                                                       {
+                                                           size = "30",
+                                                           placeholder = "Nhập địa chỉ",
+                                                           @class = "field__input"
+                                                       })
+                                </div>
+                                @Html.ValidationMessageFor(ship => ship.Address)
+                            </div>
+
+
+                        </div>
+                    </div>
+                </div>
+                <div class="step__footer" data-step-footer>
+                    @if (currentOrder != null)
+                    {
+                        <button name="button" type="submit" class="step__footer__continue-btn btn" style="background-color: #008000">
+                            <span class="btn__content">Lưu lại</span>
+                            <i class="btn__spinner icon icon--button-spinner"></i>
+                        </button>
+                    }
+                    else
+                    {
+
+                        <button name="button" type="submit" class="step__footer__continue-btn btn" style="background-color: red">
+                            <span class="btn__content">Đặt hàng</span>
+                            <i class="btn__spinner icon icon--button-spinner"></i>
+                        </button>
+                                                <a style="margin-top:5px" class="step__footer__previous-link" href="@Url.ViewCartUrl()">
+                                                    <svg class="icon-svg icon-svg--color-accent icon-svg--size-10 previous-link__icon rtl-flip" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10">
+                                                        <path d="M8 1L7 0 3 4 2 5l1 1 4 4 1-1-4-4" />
+                                                    </svg>
+                                                    <span class="step__footer__previous-link-content">Quay lại giỏ hàng</span>
+                                                </a>
+                    }
+
+                </div>
+            </form>
+
+        }
+
+    </div>
+</div>

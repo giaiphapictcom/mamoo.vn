@@ -1,0 +1,154 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{4540F1D2-C7AC-4BC4-9E2D-F2271279AEAC}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>V308CMS.Respository</RootNamespace>
+    <AssemblyName>V308CMS.Respository</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="adodb, Version=7.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="EntityFramework">
+      <HintPath>..\packages\EntityFramework.6.2.0-beta1\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Data.OData, Version=5.6.4.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.Data.Services.Client, Version=5.6.4.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="MySql.Data.Entity, Version=6.9.5.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL" />
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.Entity.Design" />
+    <Reference Include="System.Data.Linq" />
+    <Reference Include="System.IdentityModel" />
+    <Reference Include="System.Net" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.Entity.Design" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WebMatrix.Data, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="WebMatrix.WebData, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AdminRespository.cs" />
+    <Compile Include="AffilateCodeRespository.cs" />
+    <Compile Include="AffilateUserRespository.cs" />
+    <Compile Include="AffiliateCategoryRespository.cs" />
+    <Compile Include="BannerRespository.cs" />
+    <Compile Include="BoxContentRespository.cs" />
+    <Compile Include="ColorRespository.cs" />
+    <Compile Include="CountryRespository.cs" />
+    <Compile Include="OrderTransactionRespository.cs" />
+    <Compile Include="ProductOrderRevenueRespository.cs" />
+    <Compile Include="ShippingAddressRespository.cs" />
+    <Compile Include="EmailConfigRepository.cs" />
+    <Compile Include="EmailLogRespository.cs" />
+    <Compile Include="IBaseRespository.cs" />
+    <Compile Include="MenuConfigRespository.cs" />
+    <Compile Include="NewsRespository.cs" />
+    <Compile Include="PermissionRespository.cs" />
+    <Compile Include="ProductAttributeRespository.cs" />
+    <Compile Include="ProductBrandRespository.cs" />
+    <Compile Include="ProductColorRespository.cs" />
+    <Compile Include="ProductDistributorRespository.cs" />
+    <Compile Include="ProductImageRespository.cs" />
+    <Compile Include="ProductManufacturerRespository.cs" />
+    <Compile Include="ProductOrderDetailRespository.cs" />
+    <Compile Include="ProductOrderRespository.cs" />
+    <Compile Include="ProductRespository.cs" />
+    <Compile Include="ProductSaleOffRespository.cs" />
+    <Compile Include="ProductSizeRespository.cs" />
+    <Compile Include="ProductStoreRespository.cs" />
+    <Compile Include="ProductTypeRepository.cs" />
+    <Compile Include="ProductUnitRespository.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RegionRespository.cs" />
+    <Compile Include="RoleRespository.cs" />
+    <Compile Include="SiteConfigRespository.cs" />
+    <Compile Include="SizeRespository.cs" />
+    <Compile Include="SupportManRepository.cs" />
+    <Compile Include="UserRespository.cs" />
+    <Compile Include="VideoRespository.cs" />
+    <Compile Include="WebsiteRequestRepository.cs" />
+    <Compile Include="VoucherLogRespository.cs" />
+    <Compile Include="VoucherRespository.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\V308CMS.Common\V308CMS.Common.csproj">
+      <Project>{c4aef9a6-cf03-429d-84f7-cdc2f058f556}</Project>
+      <Name>V308CMS.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\V308CMS.Data\V308CMS.Data.csproj">
+      <Project>{4f5528a8-75f6-4b33-b254-2eaa5f916f12}</Project>
+      <Name>V308CMS.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\V308CMS.Dependencies\V308CMS.Dependencies.csproj">
+      <Project>{6330e246-9e72-4bf7-835e-971936615b7f}</Project>
+      <Name>V308CMS.Dependencies</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="bin\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

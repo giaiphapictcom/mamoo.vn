@@ -1,0 +1,56 @@
+﻿@using V308CMS.Helpers.Url
+@model List<V308CMS.Data.Models.Banner>
+@if (Model != null && Model.Count > 0)
+{
+    <div class="typo-slider" style="overflow: hidden; position: relative;">
+        <div class="fullwidthbanner-container">
+            <div id="rev_slider" class="rev_slider loadding-image fullwidthabanner">
+                <ul>
+                    @foreach (var bannerItem in Model)
+                    {
+                         <li class="rev_slider_0" data-transition="random" data-slotamount="7" data-masterspeed="500" data-thumb="@bannerItem.ImageUrl.ToUrl(150,81)" data-saveperformance="off" data-title="@bannerItem.Id">
+
+                            <img src="@bannerItem.ImageUrl.ToUrl(900,483)" data-bgposition="center center" data-bgfit="cover" data-bgrepeat="no-repeat" alt="@bannerItem.Name" />
+                            <div class="tp-caption sfb typo-title" style="color: #ffffff" data-x="right" data-y="160" data-speed="500" data-start="1000" data-endspeed="500" data-easing="Linear.easeNone" data-elementdelay="0.1" data-endelementdelay="0.1">
+                                @bannerItem.Name
+                            </div>
+                            <div class="tp-caption sfb typo-content" style="color: #ffffff" data-x="right" data-y="245" data-endspeed="500" data-speed="500" data-start="1400" data-easing="Linear.easeNone" data-elementdelay="0.1" data-endelementdelay="0.1">
+                                @bannerItem.Description
+                            </div>
+                            <div class="tp-caption sfb typo-button button-readmore" data-x="right" data-y="320" data-endspeed="500" data-speed="500" data-start="1700" data-easing="Linear.easeNone" data-elementdelay="0.1" data-endelementdelay="0.1">
+                                <a class="harman_btn4" href="@(string.IsNullOrWhiteSpace(bannerItem.Link)?"javascript:void(0)" : bannerItem.Link)" @(string.IsNullOrWhiteSpace(bannerItem.Target)?"": string.Format("target='{0}'",bannerItem.Target))>Chi tiết</a>
+                            </div>
+                         </li>
+                    }                  
+                </ul>
+            </div>
+        </div>
+    </div>
+}
+
+<script>
+    jQuery(function () {
+
+        setTimeout(function () {
+            jQuery("#rev_slider").removeClass("loadding-image");
+        }, 3000);
+
+        if (jQuery('#rev_slider').length > 0)
+            jQuery('#rev_slider').show().revolution({
+                dottedOverlay: 'none',
+                delay: 8000,
+                startwidth: 863,
+                startheight: 470,
+                navigationType: "both",
+                navigationArrows: "",
+                navigationStyle: 'preview3',
+                touchenabled: "on",
+                onHoverStop: "on",
+
+                hideSliderAtLimit: 0,
+                hideCaptionAtLimit: 0,
+                hideAllCaptionAtLilmit: 0,
+                startWithSlide: 0
+            });
+    });
+</script>

@@ -1,0 +1,25 @@
+﻿@model V308CMS.Data.Models.Banner
+@if (Model != null)
+{ 
+    <div class="shopify-section ">
+        <div class="container-block m-0">
+            <div class="container border-col">
+                <div class="row newsfooter">
+                    <div class="col-md-12 col-sm-12 col-xs-12 article-home-full" style="margin-bottom: 0;">
+                        <h3>
+                            <span>@Model.Name</span>
+                            <hr class="redline" />
+                        </h3>
+                            
+                        
+                        <p>
+                            <a href="@Model.Link"><img src="@V308CMS.Sale.Helpers.ImageUrlHelper.ToUrl(Model.ImageUrl)" alt="@Model.Name" /></a>
+                        </p>   
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
