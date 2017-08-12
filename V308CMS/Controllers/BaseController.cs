@@ -159,8 +159,13 @@ namespace V308CMS.Controllers
             FacebookService = new FacebookService(ConfigHelper.FacebookAppId,ConfigHelper.FacebookAppSecret);
             LoadSiteConfig();
 
-            
-            
+            if (HttpContext != null && HttpContext.User.Identity.IsAuthenticated == true && User != null)
+            {
+                //lay thong tin chi tiet user
+                ViewBag.Account = AccountService.LayTinTheoId(System.Int32.Parse(User.UserId.ToString()));
+                ViewBag.IsAuthenticated = true;
+            }
+
 
         }
         public VideoRespository VideoService { get; set; }

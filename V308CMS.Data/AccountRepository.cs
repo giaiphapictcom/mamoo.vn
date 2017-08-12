@@ -26,6 +26,7 @@ namespace V308CMS.Data
                         select p).FirstOrDefault();
             }
         }
+
         public ETLogin CheckDangNhap(string  pUsername,string pPassword,string site= Site.home)
 
         {
@@ -402,9 +403,6 @@ namespace V308CMS.Data
                         where p.ID == id
                         select p).FirstOrDefault();
             }
-                
-
-
         }
 
 
@@ -531,7 +529,6 @@ namespace V308CMS.Data
             }
 
         }
-
         public string UpdateObject(Account data)
         {
             try
@@ -585,5 +582,17 @@ namespace V308CMS.Data
 
 
         }
+
+        public List<Account> getUseridOfByAffiliate(int affiliate_id=0) {
+            List<Account> items = new List<Account>();
+            using (var entities = new V308CMSEntities())
+            {
+
+                var users = entities.Account.Where(p=> p.affiliate_id == affiliate_id);
+                items = users.ToList();
+            }
+            return items;
+        }
+
     }
 }

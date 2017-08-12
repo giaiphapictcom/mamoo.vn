@@ -1676,6 +1676,7 @@ namespace V308CMS.Data
         private string _URl;
         private int _Status;
         private DateTime? _Created;
+        private int _Creator;
 
         #endregion
         #region[Public Properties]
@@ -1687,6 +1688,7 @@ namespace V308CMS.Data
         public string url { get { if (String.IsNullOrEmpty(_URl)) return ""; else return _URl; } set { _URl = value; } }
         public int status { get { if ( _Status < 0) return 0; else return _Status; } set { if (_Status != value) { if (_Status < 0) _Status = 0; else _Status = value; } } }
         public DateTime? created { get { if (_Created == null) return new DateTime(); else return _Created; } set { if (_Created != value) { _Created = value; } } }
+        public int creator { get { return _Creator; } set { _Creator = value; } }
         #endregion
 
     }

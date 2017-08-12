@@ -17,9 +17,9 @@
 		</div>
         <div class="col-2 hidden-md-up mobileuser" style="font-size: 25px; padding-top: 15px;">
 
-            @if (AuthenticationHelper.IsAuthenticated && User !=null)
+            @if (AuthenticationHelper.IsAuthenticated && ViewBag.Account != null )
             {
-                VisisterRepo.UpdateUid(User.UserId);
+                VisisterRepo.UpdateUid(ViewBag.Account.UserId);
 
                 <a class="login" href="#"><i class="fa fa-user"></i></a>
             }

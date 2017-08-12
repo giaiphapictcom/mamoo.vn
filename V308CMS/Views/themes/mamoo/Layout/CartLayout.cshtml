@@ -180,9 +180,9 @@
                                     </tr>
                                 </tfoot>
                             </table>
-                            @if (AuthenticationHelper.IsAuthenticated && User !=null )
+                            @if (AuthenticationHelper.IsAuthenticated)
                             {
-                                if (string.IsNullOrWhiteSpace(User.Affilate.Key))
+                                if (ViewBag.Account != null &&  string.IsNullOrWhiteSpace(ViewBag.Account.affiliate_code))
                                 {
                                     <div class="rw-checkout-voucher" style="">
                                         <div class="caption-rw-checkout ttl-voucher">
@@ -210,7 +210,7 @@
                                         </div>
                                     </div>
                                 }
-                                else
+                                else if (ViewBag.Account != null)
                                 {
                                     <div class="rw-checkout-voucher" style="">
                                         <div class="caption-rw-checkout ttl-voucher">
@@ -235,11 +235,11 @@
                                                 <tfoot class="total-line-table__footer">
                                                     <tr class="total-line">
                                                         <td class="total-line__name payment-due-label">
-                                                            <span class="payment-due-label__total">Mã Affilate <span style="color:#ff0000">@User.Affilate.Key</span> giảm giá @User.Affilate.Value%</span>
+                                                            <span class="payment-due-label__total">Mã Affilate <span style="color:#ff0000">@ViewBag.Account.affiliate_code</span> giảm giá @ViewBag.Account.affiliate_code %</span>
                                                         </td>
                                                         <td class="total-line__price payment-due">
-                                                            <span class="payment-due__price" data-checkout-payment-due-target="@currentCart.GetSubTotalAfterAffilate(User.Affilate.Value).ToPriceString()">
-                                                                @currentCart.GetSubTotalAfterAffilate(User.Affilate.Value).ToPriceString()
+                                                            <span class="payment-due__price" data-checkout-payment-due-target="@currentCart.GetSubTotalAfterAffilate(ViewBag.Account.affiliate_code).ToPriceString()">
+                                                                @currentCart.GetSubTotalAfterAffilate(ViewBag.Account.affiliate_code).ToPriceString()
                                                             </span>
                                                         </td>
                                                     </tr>

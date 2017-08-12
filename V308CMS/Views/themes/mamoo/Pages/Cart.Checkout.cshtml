@@ -14,8 +14,8 @@
     var currentOrder =(ProductOrder) ViewBag.Order;
     var transactionId = (string)ViewBag.TransactionId;
     string userAvatar = "";
-    if (User != null) {
-        userAvatar = User.Avatar;
+    if (ViewBag.Account != null) {
+        userAvatar = ViewBag.Account.Avatar;
     }
 }
 <div class="step" data-step="contact_information">

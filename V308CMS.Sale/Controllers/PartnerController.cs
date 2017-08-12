@@ -64,7 +64,90 @@ namespace V308CMS.Sale.Controllers
         [AffiliateAuthorize]
         public ActionResult Index()
         {
-            return View();
+            var Model = new AffiliateDashboard();
+            if (Session != null && Session["UserId"] != null)
+            {
+                uid = int.Parse(Session["UserId"].ToString());
+            }
+            if (uid > 0) {
+                DateTime today = DateTime.Today;
+                using (var entities = new V308CMSEntities())
+                {
+                    var links = entities.AffiliateLink.Where(l => l.created_by == uid).ToList();
+                    Model.link_count = links.Count();
+                    int click_count = 0;
+                    if (links.Count() > 0)
+                    {
+                        foreach (var l in links)
+                        {
+                            var clicks = entities.AffilateLinkClickTbl.Where(c => c.link_id == l.ID).ToList();
+                            if (clicks.Count() > 0)
+                            {
+                                foreach (var c in clicks)
+                                {
+                                    click_count += c.count;
+                                }
+                            }
+                        }
+                        Model.click_count = click_count;
+                    }
+
+                    var banners = entities.AffiliateBanner.Where(b => b.creator == uid);
+                    Model.banner_count = banners.Count();
+
+                    var vouchers = entities.CounponTbl.Where(c => c.created_by == uid && c.status == 1 && c.site == Site.affiliate);
+                    Model.voucher_count = vouchers.Count();
+
+                    var system_vouchers = entities.CounponTbl.Where(c => c.status == 1 && c.site != Site.affiliate);
+                    Model.voucher_system_count = system_vouchers.Count();
+
+                    var products = entities.Product.Where(p => p.Status == true).ToList();
+                    Model.product_count = products.Count();
+
+                    int big_sale_count = 0;
+                    products = ProductRepos.GetListProductSaleOff(15, (int)SortEnum.Default, out big_sale_count);
+                    Model.product_bigsale_count = big_sale_count;
+
+                    var users = AccountRepos.getUseridOfByAffiliate(uid);
+                    Model.customer_count = users.Count();
+                    Model.customer_new_count = users.Where(u => ((DateTime)u.Date).Year==today.Year && ((DateTime)u.Date).Month == today.Month).Count();
+
+                    var uids = users.Select(u => u.ID).ToList();
+                    var Orders = entities.ProductOrder.Where(p => uids.Contains((int)p.AccountID))
+                                .Select(p => p);
+
+                    var Order_details = entities.ProductOrderItem.Where(i => Orders.Select(o => o.ID).ToList().Contains((int)i.order_id));
+                    
+                    Model.order_price_sum = (double)Orders.ToList().Sum(o=>o.Price);
+                    Model.order_finish_sum = (double)Orders.ToList().Where(o=>o.Status== (int)OrderStatusEnum.Complete).Sum(o => o.Price);
+                    Model.order_waiting_count = Orders.ToList().Where(o => o.Status == (int)OrderStatusEnum.Pending || o.Status == (int)OrderStatusEnum.Processing).Count();
+                    Model.order_delivering_count = Orders.ToList().Where(o => o.Status == (int)OrderStatusEnum.Delivering).Count();
+                    Model.order_finish_count = Orders.ToList().Where(o => o.Status == (int)OrderStatusEnum.Complete).Count();
+                    Model.order_cancel_count = Orders.ToList().Where(o => o.Status == (int)OrderStatusEnum.CanceelledPayment || o.Status == (int)OrderStatusEnum.CancelledOrder).Count();
+
+                    if (Order_details.Count() > 0)
+                    {
+                        double revenue_sum = 0;
+                        foreach (var order_detail in Order_details.ToList())
+                        {
+                            var product_revenue_gain = entities.RevenueGainTbl.Where(r => r.product_id == order_detail.item_id).OrderByDescending(r => r.created).FirstOrDefault();
+                            if (product_revenue_gain != null && product_revenue_gain.id > 0)
+                            {
+                                revenue_sum += (double)(product_revenue_gain.value * order_detail.item_price / 100);
+                            }
+                        }
+                        Model.revenue_sum = revenue_sum;
+                    }
+
+                    var Revenues = entities.ProductOrderRevenueTbl.Where(r=>r.Affiliate ==uid);
+                    Model.revenue_payed_sum = (double)Revenues.ToList().Sum(r=>r.Amount);
+
+                }
+                     
+
+            }
+            
+            return View(Model);
         }
 
         [HttpGet]
@@ -84,7 +167,10 @@ namespace V308CMS.Sale.Controllers
                 //ViewBag.Message = status ? "Google reCaptcha validation success" : "Google reCaptcha validation failed";
 
                 ETLogin mETLogin;
-
+                if (System.Web.HttpContext.Current.Request.Url.Host == "localhost") {
+                    status = true;
+                }
+                
                 if (status == true)
                 {
                     
@@ -304,7 +390,7 @@ namespace V308CMS.Sale.Controllers
                 }
                 CreateRepos();
                 AffiliateLinksPage Model = new AffiliateLinksPage();
-                Model.Links = LinkRepo.GetItems(nPage, uid, 10);
+                Model.Links = LinkRepo.GetItems(nPage, uid, PageSize);
                 Model.LinkTotal = LinkRepo.itemTotal;
 
                 Model.Page = nPage;
@@ -325,6 +411,11 @@ namespace V308CMS.Sale.Controllers
         [AffiliateAuthorize]
         public ActionResult LinkReport()
         {
+            if (Session != null && Session["UserId"] != null && uid < 1)
+            {
+                uid = int.Parse(Session["UserId"].ToString());
+            }
+
             try
             {
                 int nPage = Convert.ToInt32(Request.QueryString["p"]);
@@ -411,7 +502,7 @@ namespace V308CMS.Sale.Controllers
 
                 using (var entities = new V308CMSEntities())
                 {
-                    var products = entities.Product.Select(p => p);
+                    var products = entities.Product.Select(p => p).Where(p=>p.Status==true);
                     products = products.OrderByDescending(p => p.ID);
 
                     if (Model.category > 0) {
@@ -468,8 +559,11 @@ namespace V308CMS.Sale.Controllers
         {
             try
             {
-
-                AffiliateBannerPage Model = BannerDaraRepo.GetItemsPage(nPage);
+                if (Session != null && Session["UserId"] != null)
+                {
+                    uid = int.Parse(Session["UserId"].ToString());
+                }
+                AffiliateBannerPage Model = BannerDaraRepo.GetItemsPage(nPage,uid);
                 return View(Model);
             }
             catch (Exception ex)
@@ -496,10 +590,15 @@ namespace V308CMS.Sale.Controllers
         {
             try
             {
+                if (Session != null && Session["UserId"] != null)
+                {
+                    uid = int.Parse(Session["UserId"].ToString());
+                }
                 CreateRepos();
                 var newItem = Data.CloneTo<AffiliateBanner>(new[] { "File" });
 
                 newItem.image = Data.File != null ? Data.File.Upload() : Data.Image;
+                newItem.creator = uid;
                 BannerDaraRepo.InsertObject(newItem);
                 return Redirect("/banner");
             }
@@ -571,6 +670,7 @@ namespace V308CMS.Sale.Controllers
                 ModelState.AddModelError("", "Cần phải chọn hình ảnh.");
                 return View("CouponForm", coupon);
             }
+            newCoupon.site = Site.affiliate;
             //CreateRepos();
             var result = CouponRepo.InsertObject(newCoupon);
             if (result == Result.Exists) {
@@ -619,6 +719,10 @@ namespace V308CMS.Sale.Controllers
         [AffiliateAuthorize]
         public ActionResult Orders()
         {
+            if (Session != null && Session["UserId"] != null)
+            {
+                uid = int.Parse(Session["UserId"].ToString());
+            }
             try
             {
                 GetValue();
@@ -627,13 +731,17 @@ namespace V308CMS.Sale.Controllers
                 string order_no_search = Request.QueryString["no"];
                 using (var entities = new V308CMSEntities())
                 {
-                    //var orders = from p in entities.ProductOrder
-                    //            orderby p.ID descending
-                    //            select p;
+                    var users = AccountRepos.getUseridOfByAffiliate(uid);
+                    var uids = users.Select(u => u.ID).ToList();
+
                     var orders = entities.ProductOrder.Select(o => o);
                     if (order_no_search != null && order_no_search.Length > 0) {
                         orders = orders.Where(o => o.ID.ToString() == order_no_search);
                     }
+                    
+                    orders = orders.Where(o => uids.Contains((int)o.AccountID))
+                                .Select(o=> o);
+
                     Model.Total = orders.Count();
                     Model.Page = nPage;
                     Model.Items = orders.OrderBy(o => o.ID).Skip((nPage - 1) * PageSize).Take(PageSize).ToList();
@@ -657,6 +765,10 @@ namespace V308CMS.Sale.Controllers
         [AffiliateAuthorize]
         public ActionResult OrderReport()
         {
+            if (Session != null && Session["UserId"] != null && uid < 1)
+            {
+                uid = int.Parse(Session["UserId"].ToString());
+            }
             try
             {
                 //OrdersReportByDaysPage Model = ProductRepos.GetOrderReport7DayPage(nPage, int.Parse(Session["UserId"].ToString()));
@@ -675,14 +787,12 @@ namespace V308CMS.Sale.Controllers
                         OrdersReportByDay ReportDay = new OrdersReportByDay();
                         RevenueReportByDay RevenueDay = new RevenueReportByDay();
 
-                        var Orders = from p in entities.ProductOrder
-                                         //join m in entities.ProductOrderMap on p.AccountID equals m.uid into map
-                                         //    from m in map.DefaultIfEmpty()
-
-                                         //where m.partner_id.Equals(PartnerID)
-                                         //where p.Date <= d
-                                     where (p.Date.Year == d.Year && p.Date.Month == d.Month && p.Date.Day == d.Day)
-                                     select p;
+                        var users = AccountRepos.getUseridOfByAffiliate(uid);
+                        var uids = users.Select(u => u.ID).ToList();
+                        var Orders = entities.ProductOrder.Where(p => p.Date.Year == d.Year && p.Date.Month == d.Month && p.Date.Day == d.Day)
+                                    .Where(p => uids.Contains((int)p.AccountID))
+                                    .Select(p=>p);
+                                     
 
                         ReportDay.date = d;
                         ReportDay.Total = Orders.Count();
@@ -690,6 +800,8 @@ namespace V308CMS.Sale.Controllers
 
                         var Revenues = from p in entities.ProductOrderRevenueTbl
                                        where (p.Created.Year == d.Year && p.Created.Month == d.Month && p.Created.Day == d.Day)
+                                       where(p.Affiliate==uid)
+                                       //where(Orders.Select(o => o.ID).ToList().Contains((int)p.order_id))
                                        select p;
 
                         RevenueDay.date = d;

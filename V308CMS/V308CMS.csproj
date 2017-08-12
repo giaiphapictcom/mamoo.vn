@@ -1466,6 +1466,8 @@
     <Content Include="Content\Plugins\jquery\js\jquery-1.1.1.min.js" />
     <Content Include="Content\Plugins\jquery\js\jquery-2.2.0.min.js" />
     <Content Include="Content\Plugins\jquery\js\jquery-3.1.1.min.js" />
+    <Content Include="Content\Plugins\spzoom\jquery.spzoom.css" />
+    <Content Include="Content\Plugins\spzoom\jquery.spzoom.js" />
     <Content Include="Content\Plugins\tether\css\tether-theme-arrows-dark.css" />
     <Content Include="Content\Plugins\tether\css\tether-theme-arrows-dark.min.css" />
     <Content Include="Content\Plugins\tether\css\tether-theme-arrows.css" />
