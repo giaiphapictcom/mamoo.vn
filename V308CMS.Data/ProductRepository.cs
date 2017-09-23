@@ -20,11 +20,18 @@ namespace V308CMS.Data
         {
             using (var entities = new V308CMSEntities())
             {
-                var listProduct = (from product in entities.Product
-                    where product.Status == true && product.SaleOff>= saleOff
+                var listProduct = from product in entities.Product
+                                    .Include("ProductAttribute")
+                                    .Include("ProductImages")
+                                    .Include("ProductType")
+                                    .Include("ProductManufacturer")
+                                    .Include("ProductColor")
+                                    .Include("ProductSize")
+                                    .Include("ProductSaleOff")
+                where product.Status == true && product.SaleOff>= saleOff
                                    orderby product.Number, product.Date descending
                                     select product
-                    );
+                    ;
 
                 switch (sort)
                 {
@@ -72,6 +79,7 @@ namespace V308CMS.Data
                         break;
                 }
                 totalRecord = listProduct.Count();
+
                 return listProduct.Skip((page - 1) * pageSize).Take(pageSize).ToList();
 
 
@@ -1030,10 +1038,10 @@ namespace V308CMS.Data
         {
             using (var entities = new V308CMSEntities())
             {
-                return await (from p in entities.Product
-                        where p.Hot == true
-                        orderby p.ID descending
-                        select p).Take(limit).ToListAsync();
+                return await (from product in entities.Product.Include("ProductImages")
+                        where product.Status == true
+                        orderby product.ID descending
+                        select product).Take(limit).ToListAsync();
             }
         }
 
@@ -1991,6 +1999,17 @@ namespace V308CMS.Data
             {
                 Console.Write(ex);
                 throw;
+            }
+        }
+
+        public Product FindByCode(string code)
+        {
+            using (var entities = new V308CMSEntities())
+            {
+                return (from item in entities.Product
+                        where item.Code == code
+                        select item
+                ).FirstOrDefault();
             }
         }
     }

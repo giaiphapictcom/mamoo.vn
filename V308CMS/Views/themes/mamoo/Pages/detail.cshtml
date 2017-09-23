@@ -1,5 +1,6 @@
 ﻿@model V308CMS.Data.Product
 @using V308CMS.Common;
+@using V308CMS.Helpers;
 @using V308CMS.Helpers.Url
 @{
     Layout = "~/Views/themes/" + ViewBag.domain + "/Layout/Layout.cshtml";
@@ -14,11 +15,12 @@
     <meta property="og:site_name" content="" />
     <meta name="keywords" content="@Model.Name">
     <meta property="og:url" content="@Request.Url.ToString()">
-    <meta property="og:type" content="article" />
+    <meta property="og:type" content="website" />
     
     <meta property="og:title" content="@Model.Name">
     <meta property="og:image" content="@Ultility.ImgUrl(@Model.Image)">
     <meta property="og:description" content="@Model.Summary">
+    <meta property="fb:app_id" content="@ConfigHelper.FacebookAppId" />
     
 
 }

@@ -48,7 +48,7 @@ $(document).ready(function () {
         }
     });
     
-    jQuery(".main-content img").addClass("img-fluid");
+    jQuery(".main-content img").removeAttr("style").addClass("img-fluid");
 
 })
 

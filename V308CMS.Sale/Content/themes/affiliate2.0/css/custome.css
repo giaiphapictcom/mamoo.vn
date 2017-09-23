@@ -42,6 +42,9 @@
     .video-play iframe {
         min-height: unset;
     }
+    .btn {
+        margin-bottom: 5px !important;
+    }
 }
 
 .bannerpreview div.img {

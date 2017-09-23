@@ -149,7 +149,7 @@ namespace V308CMS.Sale.Controllers
             
             return View(Model);
         }
-
+        #region User account action
         [HttpGet]
         public ActionResult Login()
         {
@@ -341,6 +341,8 @@ namespace V308CMS.Sale.Controllers
             SetFlashError(string.Format("Có lỗi xảy ra"));
             return AccountInfomation(account);
         }
+
+        #endregion
 
         #region Support Send
         [HttpGet]
@@ -649,6 +651,7 @@ namespace V308CMS.Sale.Controllers
             var Model = new CouponModel();
             if (Request != null) {
                 Model.ProductCode = Request.QueryString["pcode"];
+                Model.product = ProductRepos.FindByCode(Model.ProductCode);
             }
 
             return View(Model);
@@ -659,9 +662,13 @@ namespace V308CMS.Sale.Controllers
         [AffiliateAuthorize]
         public ActionResult CouponFormPost(CouponModel coupon)
         {
-            coupon.Image = coupon.File != null ?
-                   coupon.File.Upload() :
-                   coupon.Image;
+            if (coupon.ProductCode==null || coupon.ProductCode.Length < 1)
+            {
+                SetFlashMessage(string.Format("Cần phải nhập Mã cho sản phẩm"));
+                return View("CouponForm", coupon);
+            }
+
+            coupon.Image = coupon.File != null ? coupon.File.Upload() : coupon.Image;
 
             var newCoupon = coupon.CloneTo<Counpon>(new[] { "File" });
 
@@ -671,7 +678,7 @@ namespace V308CMS.Sale.Controllers
                 return View("CouponForm", coupon);
             }
             newCoupon.site = Site.affiliate;
-            //CreateRepos();
+            
             var result = CouponRepo.InsertObject(newCoupon);
             if (result == Result.Exists) {
                 SetFlashMessage(string.Format("Mã Voucher đã tồn tại, hãy nhập mã mới"));
